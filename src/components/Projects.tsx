@@ -13,6 +13,27 @@ function GithubIcon({ size = 18 }: { size?: number }) {
 
 const projects = [
   {
+    title: "Cosplayer Portfolio Blog",
+    company: "Personal Project",
+    description: "A dynamic blog page for a cosplayer website featuring portfolio showcases, event updates, and community engagement with modern UI/UX design.",
+    image: "/project1.png",
+    tags: ["HTML/CSS", "JavaScript", "PHP", "Responsive Design"],
+  },
+  {
+    title: "Strange Domains Platform",
+    company: "Current Work",
+    description: "Main project focusing on domain management and unusual domain tracking system with advanced search capabilities and domain analytics dashboard.",
+    image: "/project2.png",
+    tags: ["PHP", "Laravel", "MySQL", "Domain Management"],
+  },
+  {
+    title: "Inventory Management System",
+    company: "Enterprise Solution",
+    description: "Comprehensive inventory system with real-time stock tracking, automated reordering, barcode scanning, and detailed reporting features.",
+    image: "/project3.png",
+    tags: ["PHP", "JavaScript", "MySQL", "Inventory Management"],
+  },
+  {
     title: "Domain Lifecycle Management",
     company: "Eversun Software",
     description: "Built a comprehensive domain lifecycle management system with tracking, history logging, and client activity monitoring using Laravel and React.js.",
@@ -62,7 +83,7 @@ export default function Projects() {
         </motion.div>
 
         {/* Project Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, index) => (
             <motion.div
               key={project.title}
@@ -76,32 +97,44 @@ export default function Projects() {
               <div className="absolute inset-0 bg-gradient-to-br from-[#22C55E]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <div className="relative z-10">
+                {/* Project Image with Animation */}
+                {project.image && (
+                  <div className="relative mb-4 overflow-hidden rounded-lg group/image">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#22C55E]/20 to-[#06B6D4]/20 opacity-0 group-hover/image:opacity-100 transition-opacity duration-500 z-10" />
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-48 object-cover rounded-lg transform group-hover/image:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-[#0F172A]/40 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center">
+                      <div className="flex gap-3 transform translate-y-4 group-hover/image:translate-y-0 transition-transform duration-300">
+                        <a
+                          href="https://github.com/mjbkaz"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 bg-[#22C55E] text-white rounded-lg hover:bg-[#16A34A] transition-colors shadow-lg hover:shadow-[#22C55E]/50"
+                          aria-label="View on GitHub"
+                        >
+                          <GithubIcon size={20} />
+                        </a>
+                        <a
+                          href="#"
+                          className="p-3 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0891B2] transition-colors shadow-lg hover:shadow-[#06B6D4]/50"
+                          aria-label="External link"
+                        >
+                          <ExternalLink size={20} />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Project Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-heading font-bold text-[#F8FAFC] group-hover:text-[#22C55E] transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-[#64748B]">{project.company}</p>
-                  </div>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <a
-                      href="https://github.com/mjbkaz"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 text-[#94A3B8] hover:text-[#22C55E] rounded-lg hover:bg-[#22C55E]/10 transition-colors"
-                      aria-label="View on GitHub"
-                    >
-                      <GithubIcon size={18} />
-                    </a>
-                    <a
-                      href="#"
-                      className="p-2 text-[#94A3B8] hover:text-[#22C55E] rounded-lg hover:bg-[#22C55E]/10 transition-colors"
-                      aria-label="External link"
-                    >
-                      <ExternalLink size={18} />
-                    </a>
-                  </div>
+                <div className="mb-4">
+                  <h3 className="text-xl font-heading font-bold text-[#F8FAFC] group-hover:text-[#22C55E] transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-[#64748B]">{project.company}</p>
                 </div>
 
                 {/* Description */}
