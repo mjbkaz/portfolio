@@ -25,6 +25,16 @@ export default function Hero() {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="/bgportfolio.png"
+          alt="Portfolio Background"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/80 via-[#0F172A]/60 to-[#0F172A]" />
+      </div>
+
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-[#22C55E]/10 rounded-full blur-[100px] animate-float" />

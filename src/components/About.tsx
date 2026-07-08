@@ -5,8 +5,14 @@ import { Code2, Gamepad2, GraduationCap, MapPin } from "lucide-react";
 
 export default function About() {
   return (
-    <section id="about" className="relative py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" className="relative py-24 md:py-32 overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#22C55E]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-[#06B6D4]/5 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -33,13 +33,19 @@ const experiences = [
 
 export default function Experience() {
   return (
-    <section id="experience" className="relative py-24 md:py-32">
+    <section id="experience" className="relative py-24 md:py-32 overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 right-0 w-80 h-80 bg-[#22C55E]/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/3 left-0 w-72 h-72 bg-[#06B6D4]/5 rounded-full blur-[100px]" />
+      </div>
+
       {/* Background Decoration */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#22C55E]/20 to-transparent" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
