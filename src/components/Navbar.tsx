@@ -108,6 +108,8 @@ export default function Navbar() {
       <nav className="fixed inset-0 z-50 overflow-visible">
         {navItems.map((item, index) => {
           const pos = positions[item.label] || defaultPositions[item.label];
+          const safeX = Math.min(88, Math.max(12, pos.x));
+          const safeY = Math.min(86, Math.max(8, pos.y));
 
           return (
             <a
@@ -120,8 +122,8 @@ export default function Navbar() {
               } ${isDragging === item.label ? 'cursor-grabbing' : dragMode ? 'cursor-grab' : 'cursor-pointer'}`}
               style={{
                 animationDelay: `${index * 0.5}s`,
-                left: `${pos.x}%`,
-                top: `${pos.y}%`,
+                left: `${safeX}%`,
+                top: `${safeY}%`,
                 transform: `translate(-50%, -50%)`,
               }}
               onMouseDown={(e) => handleMouseDown(e, item.label)}
@@ -135,7 +137,7 @@ export default function Navbar() {
         })}
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden fixed top-4 left-1/2 -translate-x-1/2 z-50">
+        <div className="md:hidden fixed top-2 right-2 z-50">
           <button
             onClick={() => setMobileOpen((v) => !v)}
             className="bubble-nav-item w-16 h-16 flex items-center justify-center gap-2"
@@ -166,13 +168,13 @@ export default function Navbar() {
         {/* Reset Button */}
         <button
           onClick={resetPositions}
-          className="fixed bottom-4 right-4 bg-accent text-white px-4 py-2 rounded-lg shadow-lg hover:bg-accent-hover transition-colors z-50 text-sm font-semibold"
+          className="hidden md:block fixed bottom-4 right-4 bg-accent text-white px-4 py-2 rounded-lg shadow-lg hover:bg-accent-hover transition-colors z-50 text-sm font-semibold"
         >
           Reset Bubbles
         </button>
 
         {/* Drag Mode Toggle */}
-        <div className="fixed bottom-4 right-40 z-50 group">
+        <div className="hidden md:block fixed bottom-4 right-40 z-50 group">
           <button
             onClick={() => setDragMode((v) => !v)}
             aria-pressed={dragMode}
