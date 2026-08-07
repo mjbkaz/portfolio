@@ -49,7 +49,7 @@ export default function SideRail() {
 
       {/* Tech Cloud */}
       <div className="flex-1 flex items-center justify-center py-8">
-        <div className="w-full max-w-[200px]">
+        <div id="tech-stack" className="w-full max-w-[200px]">
           <p className="text-center text-xs font-mono text-[#64748B] mb-1">
             tech stack
           </p>
