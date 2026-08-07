@@ -18,12 +18,12 @@ const navItems = [
 ];
 
 const defaultPositions: Record<string, Position> = {
-  'Home': { x: 40, y: 50 },
-  'Experience': { x: 55, y: 15 },
-  'Projects': { x: 50, y: 78 },
-  'About': { x: 85, y: 18 },
-  'Skills': { x: 90, y: 48 },
-  'Contact': { x: 82, y: 78 }
+  'Home': { x: 38, y: 18 },
+  'Experience': { x: 62, y: 10 },
+  'Projects': { x: 80, y: 22 },
+  'About': { x: 52, y: 34 },
+  'Skills': { x: 74, y: 44 },
+  'Contact': { x: 90, y: 30 }
 };
 
 export default function Navbar() {
