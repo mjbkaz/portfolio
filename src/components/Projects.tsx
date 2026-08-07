@@ -118,9 +118,11 @@ export default function Projects() {
                           <GithubIcon size={20} />
                         </a>
                         <a
-                          href="#"
+                          href="https://github.com/mjbkaz"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="p-3 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0891B2] transition-colors shadow-lg hover:shadow-[#06B6D4]/50"
-                          aria-label="External link"
+                          aria-label="View source on GitHub"
                         >
                           <ExternalLink size={20} />
                         </a>

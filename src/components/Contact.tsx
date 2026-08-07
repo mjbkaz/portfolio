@@ -2,9 +2,14 @@
 
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function Contact() {
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+  const [baseUrl, setBaseUrl] = useState("");
+
+  useEffect(() => {
+    setBaseUrl(window.location.origin);
+  }, []);
 
   return (
     <section id="contact" className="relative py-24 md:py-32 overflow-hidden">
