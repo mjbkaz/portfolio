@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import CursorTrail from "@/components/CursorTrail";
+import LoadingVideo from "@/components/LoadingVideo";
 
 export const metadata: Metadata = {
   title: "Mike Julius Coloma | Web Developer",
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="min-h-screen bg-[#0F172A] text-[#F8FAFC] font-sans antialiased">
+        <LoadingVideo />
         <CursorTrail />
         {children}
       </body>
