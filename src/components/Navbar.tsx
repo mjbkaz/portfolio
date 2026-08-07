@@ -105,7 +105,7 @@ export default function Navbar() {
   return (
     <>
       {/* Floating Navigation Bubbles */}
-      <nav className="fixed inset-0 z-50 overflow-visible">
+      <nav className="fixed inset-0 z-50 overflow-visible pointer-events-none">
         {navItems.map((item, index) => {
           const pos = positions[item.label] || defaultPositions[item.label];
           const safeX = Math.min(88, Math.max(12, pos.x));
@@ -115,7 +115,7 @@ export default function Navbar() {
             <a
               key={item.href}
               href={item.href}
-              className={`bubble-nav-item hidden md:flex items-center justify-center font-semibold text-white drop-shadow-lg select-none ${
+              className={`bubble-nav-item hidden md:flex pointer-events-auto items-center justify-center font-semibold text-white drop-shadow-lg select-none ${
                 item.size === "sm" ? "w-40 h-40 text-xl" :
                 item.size === "lg" ? "w-56 h-56 text-4xl" :
                 "w-44 h-44 text-2xl"
@@ -137,7 +137,7 @@ export default function Navbar() {
         })}
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden fixed top-2 right-2 z-50">
+        <div className="md:hidden pointer-events-auto fixed top-2 right-2 z-50">
           <button
             onClick={() => setMobileOpen((v) => !v)}
             className="bubble-nav-item w-16 h-16 flex items-center justify-center gap-2"
@@ -150,7 +150,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="md:hidden fixed inset-0 z-40 bg-[#0F172A]/95 backdrop-blur-sm flex flex-col items-center justify-center gap-6">
+          <div className="md:hidden fixed inset-0 z-40 pointer-events-auto bg-[#0F172A]/95 backdrop-blur-sm flex flex-col items-center justify-center gap-6">
             {navItems.map((item, index) => (
               <a
                 key={item.href}
@@ -168,13 +168,13 @@ export default function Navbar() {
         {/* Reset Button */}
         <button
           onClick={resetPositions}
-          className="hidden md:block fixed bottom-4 right-4 bg-accent text-white px-4 py-2 rounded-lg shadow-lg hover:bg-accent-hover transition-colors z-50 text-sm font-semibold"
+          className="hidden md:block pointer-events-auto fixed bottom-4 right-4 bg-accent text-white px-4 py-2 rounded-lg shadow-lg hover:bg-accent-hover transition-colors z-50 text-sm font-semibold"
         >
           Reset Bubbles
         </button>
 
         {/* Drag Mode Toggle */}
-        <div className="hidden md:block fixed bottom-4 right-40 z-50 group">
+        <div className="hidden md:block pointer-events-auto fixed bottom-4 right-40 z-50 group">
           <button
             onClick={() => setDragMode((v) => !v)}
             aria-pressed={dragMode}
