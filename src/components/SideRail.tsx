@@ -1,4 +1,5 @@
 import { Code2, Mail } from "lucide-react";
+import { IconCloudDemo } from "@/components/ui/icon-cloud-demo";
 
 function GithubIcon({ size = 20 }: { size?: number }) {
   return (
@@ -43,6 +44,16 @@ export default function SideRail() {
         <div className="mt-6 flex items-center gap-2 text-[#22C55E] text-sm font-medium">
           <span className="w-2 h-2 bg-[#22C55E] rounded-full animate-pulse" />
           Available for opportunities
+        </div>
+      </div>
+
+      {/* Tech Cloud */}
+      <div className="flex-1 flex items-center justify-center py-8">
+        <div className="w-full max-w-[200px]">
+          <p className="text-center text-xs font-mono text-[#64748B] mb-1">
+            tech stack
+          </p>
+          <IconCloudDemo />
         </div>
       </div>
 

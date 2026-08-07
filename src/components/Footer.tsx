@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Code2, Mail, ArrowUp } from "lucide-react";
 
 function GithubIcon({ size = 20 }: { size?: number }) {
@@ -19,6 +20,15 @@ function LinkedinIcon({ size = 20 }: { size?: number }) {
 }
 
 export default function Footer() {
+  const [year, setYear] = useState(() => {
+    // Server and client agree during SSR: a single stable value.
+    return "2026";
+  });
+
+  useEffect(() => {
+    setYear(String(new Date().getFullYear()));
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -85,7 +95,7 @@ export default function Footer() {
 
         <div className="mt-8 pt-8 border-t border-[#475569]/20 text-center">
           <p className="text-[#64748B] text-sm">
-            &copy; {new Date().getFullYear()} Mike Julius Coloma. Built with Next.js & Tailwind CSS.
+            &copy; {year} Mike Julius Coloma. Built with Next.js & Tailwind CSS.
           </p>
         </div>
       </div>
