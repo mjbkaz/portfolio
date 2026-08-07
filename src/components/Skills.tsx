@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import GlassCard from "@/components/GlassCard";
 import {
   Code2,
   Database,
@@ -102,13 +103,10 @@ export default function Skills() {
         {/* Skill Categories Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {skillCategories.map((category, catIndex) => (
-            <motion.div
+            <GlassCard
               key={category.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: catIndex * 0.1 }}
-              className="bg-[#1A2332] border border-[#475569]/20 rounded-xl p-6 hover:border-[#22C55E]/30 transition-all duration-300"
+              delay={catIndex * 0.1}
+              className="p-6"
             >
               {/* Category Header */}
               <div className="flex items-center gap-3 mb-6">
@@ -153,20 +151,14 @@ export default function Skills() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </GlassCard>
           ))}
         </div>
 
         {/* Certifications & Gaming Section */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Certifications */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="bg-[#1A2332] border border-[#475569]/20 rounded-xl p-6"
-          >
+          <GlassCard className="p-6">
             <h3 className="text-lg font-heading font-bold text-[#F8FAFC] mb-4 flex items-center gap-2">
               <Star size={20} className="text-[#EAB308]" />
               Certifications
@@ -182,15 +174,12 @@ export default function Skills() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </GlassCard>
 
           {/* Gaming Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-gradient-to-r from-[#22C55E]/10 to-[#06B6D4]/10 border border-[#22C55E]/20 rounded-xl p-6"
+          <GlassCard
+            delay={0.1}
+            className="bg-gradient-to-r from-[#22C55E]/10 to-[#06B6D4]/10 border-[#22C55E]/20 p-6"
           >
             <h3 className="text-lg font-heading font-bold text-[#F8FAFC] mb-4 flex items-center gap-2">
               <Gamepad2 size={20} className="text-[#22C55E]" />
@@ -212,7 +201,7 @@ export default function Skills() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </GlassCard>
         </div>
       </div>
     </section>

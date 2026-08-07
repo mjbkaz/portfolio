@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import GlassCard from "@/components/GlassCard";
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -85,18 +86,15 @@ export default function Projects() {
         {/* Project Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, index) => (
-            <motion.div
+            <GlassCard
               key={project.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group bg-[#1A2332] border border-[#475569]/20 rounded-xl p-6 hover:border-[#22C55E]/30 transition-all duration-300 relative overflow-hidden"
+              delay={index * 0.1}
+              className="group p-6"
             >
               {/* Hover Glow Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#22C55E]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              <div className="relative z-10">
+              <div className="relative z-0">
                 {/* Project Image with Animation */}
                 {project.image && (
                   <div className="relative mb-4 overflow-hidden rounded-lg group/image">
@@ -156,7 +154,7 @@ export default function Projects() {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </GlassCard>
           ))}
         </div>
       </div>

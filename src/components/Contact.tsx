@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { useState, useEffect } from "react";
+import GlassCard from "@/components/GlassCard";
 
 export default function Contact() {
   const [baseUrl, setBaseUrl] = useState("");
@@ -48,7 +49,7 @@ export default function Contact() {
             transition={{ duration: 0.5 }}
             className="space-y-6"
           >
-            <div className="bg-[#1A2332] border border-[#475569]/20 rounded-xl p-6 space-y-6">
+            <GlassCard noReveal className="p-6 space-y-6">
               <h3 className="text-lg font-heading font-bold text-[#F8FAFC]">
                 Contact Information
               </h3>
@@ -77,10 +78,10 @@ export default function Contact() {
                   </div>
                 </div>
               ))}
-            </div>
+            </GlassCard>
 
             {/* Availability */}
-            <div className="bg-gradient-to-r from-[#22C55E]/10 to-[#06B6D4]/10 border border-[#22C55E]/20 rounded-xl p-6">
+            <GlassCard noReveal className="border-[#22C55E]/20 p-6">
               <div className="flex items-center gap-3 mb-2">
                 <span className="w-3 h-3 bg-[#22C55E] rounded-full animate-pulse" />
                 <span className="text-[#22C55E] font-medium">Available for opportunities</span>
@@ -88,7 +89,7 @@ export default function Contact() {
               <p className="text-[#94A3B8] text-sm">
                 Currently open to freelance projects, full-time positions, and collaborations.
               </p>
-            </div>
+            </GlassCard>
           </motion.div>
 
           {/* Contact Form */}
@@ -98,11 +99,12 @@ export default function Contact() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <form
-              action="https://formsubmit.co/7a2266e20585feb9d879a5756f3e175a"
-              method="POST"
-              className="bg-[#1A2332] border border-[#475569]/20 rounded-xl p-6 space-y-5"
-            >
+            <GlassCard noReveal className="p-6">
+              <form
+                action="https://formsubmit.co/7a2266e20585feb9d879a5756f3e175a"
+                method="POST"
+                className="space-y-5"
+              >
               {/* FormSubmit config - sends directly to your Gmail */}
               <input type="hidden" name="_subject" value="New Portfolio Contact!" />
               <input type="hidden" name="_captcha" value="true" />
@@ -174,8 +176,9 @@ export default function Contact() {
                 Send Message
               </button>
             </form>
-          </motion.div>
-        </div>
+            </GlassCard>
+        </motion.div>
+      </div>
       </div>
     </section>
   );

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Briefcase, Calendar } from "lucide-react";
+import GlassCard from "@/components/GlassCard";
 
 const experiences = [
   {
@@ -82,7 +83,7 @@ export default function Experience() {
               </div>
 
               {/* Card */}
-              <div className="bg-[#1A2332] border border-[#475569]/20 rounded-xl p-6 md:p-8 hover:border-[#22C55E]/30 transition-all duration-300">
+              <GlassCard noReveal className="p-6 md:p-8">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                   <div>
@@ -119,7 +120,7 @@ export default function Experience() {
                     </motion.li>
                   ))}
                 </ul>
-              </div>
+              </GlassCard>
             </motion.div>
           ))}
         </div>

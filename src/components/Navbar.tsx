@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Move, MousePointerClick } from "lucide-react";
 
 interface Position {
   x: number;
@@ -42,9 +42,11 @@ export default function Navbar() {
 
   const [isDragging, setIsDragging] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dragMode, setDragMode] = useState(true);
   const dragOffset = useRef<{ x: number; y: number } | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent, label: string) => {
+    if (!dragMode) return; // click mode: allow link navigation, no drag
     e.preventDefault();
     const bubble = e.currentTarget as HTMLElement;
     const rect = bubble.getBoundingClientRect();
@@ -115,7 +117,7 @@ export default function Navbar() {
                 item.size === "sm" ? "w-40 h-40 text-xl" :
                 item.size === "lg" ? "w-56 h-56 text-4xl" :
                 "w-44 h-44 text-2xl"
-              } ${isDragging === item.label ? 'cursor-grabbing' : 'cursor-grab'}`}
+              } ${isDragging === item.label ? 'cursor-grabbing' : dragMode ? 'cursor-grab' : 'cursor-pointer'}`}
               style={{
                 animationDelay: `${index * 0.5}s`,
                 left: `${pos.x}%`,
@@ -123,6 +125,9 @@ export default function Navbar() {
                 transform: `translate(-50%, -50%)`,
               }}
               onMouseDown={(e) => handleMouseDown(e, item.label)}
+              onClick={(e) => {
+                if (dragMode) e.preventDefault();
+              }}
             >
               <span>{item.label}</span>
             </a>
@@ -165,6 +170,28 @@ export default function Navbar() {
         >
           Reset Bubbles
         </button>
+
+        {/* Drag Mode Toggle */}
+        <div className="fixed bottom-4 right-40 z-50 group">
+          <button
+            onClick={() => setDragMode((v) => !v)}
+            aria-pressed={dragMode}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg transition-colors z-50 text-sm font-semibold ${
+              dragMode
+                ? "bg-[#22C55E] text-[#0F172A] hover:bg-[#16A34A]"
+                : "bg-[#1A2332] text-[#94A3B8] border border-[#475569]/40 hover:border-[#22C55E]/50 hover:text-[#22C55E]"
+            }`}
+          >
+            {dragMode ? <Move size={16} /> : <MousePointerClick size={16} />}
+            {dragMode ? "Drag Mode: ON" : "Drag Mode: OFF"}
+          </button>
+          {/* Tooltip */}
+          <span className="pointer-events-none absolute right-0 bottom-full mb-2 w-56 rounded-lg bg-[#0F172A] border border-[#475569]/40 px-3 py-2 text-xs text-[#F8FAFC] opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 z-50 shadow-xl">
+            {dragMode
+              ? "Drag the bubbles to rearrange them. Clicking won't navigate. Toggle OFF to make bubbles clickable links again."
+              : "Bubbles are clickable links now and can't be dragged. Toggle ON to rearrange them."}
+          </span>
+        </div>
       </nav>
     </>
   );
