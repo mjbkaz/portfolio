@@ -18,12 +18,12 @@ const navItems = [
 ];
 
 const defaultPositions: Record<string, Position> = {
-  'Home': { x: 5, y: 50 },
-  'Experience': { x: 20, y: 15 },
-  'Projects': { x: 18, y: 78 },
-  'About': { x: 80, y: 18 },
-  'Skills': { x: 82, y: 48 },
-  'Contact': { x: 78, y: 78 }
+  'Home': { x: 40, y: 50 },
+  'Experience': { x: 55, y: 15 },
+  'Projects': { x: 50, y: 78 },
+  'About': { x: 85, y: 18 },
+  'Skills': { x: 90, y: 48 },
+  'Contact': { x: 82, y: 78 }
 };
 
 export default function Navbar() {
@@ -42,7 +42,7 @@ export default function Navbar() {
 
   const [isDragging, setIsDragging] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dragMode, setDragMode] = useState(true);
+  const [dragMode, setDragMode] = useState(false);
   const dragOffset = useRef<{ x: number; y: number } | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent, label: string) => {

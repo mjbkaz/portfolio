@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import SideRail from "@/components/SideRail";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Experience from "@/components/Experience";
@@ -11,13 +12,16 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <Hero />
-      <About />
-      <Experience />
-      <Skills />
-      <Projects />
-      <Contact />
-      <Footer />
+      <SideRail />
+      <div className="lg:pl-72">
+        <Hero />
+        <About />
+        <Experience />
+        <Skills />
+        <Projects />
+        <Contact />
+        <Footer />
+      </div>
     </main>
   );
 }

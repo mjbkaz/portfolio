@@ -388,6 +388,22 @@ body {
   }
 }
 
+/* Cursor bubble trail */
+@keyframes bubble-trail-rise {
+  0% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--drift-x) * 0.2), calc(-50% + var(--drift-y) * 0.2)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--drift-x)), calc(-50% + var(--drift-y))) scale(1.15);
+  }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
