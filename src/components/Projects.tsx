@@ -1,163 +1,217 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
-import GlassCard from "@/components/GlassCard";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, m, useInView, useMotionValue, useSpring } from "framer-motion";
+import { ArrowUpRight, Plus } from "lucide-react";
+import Reveal from "@/components/ui/Reveal";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { GithubIcon } from "@/components/ui/BrandIcons";
+import { projects, site, type Project } from "@/lib/data";
 
-function GithubIcon({ size = 18 }: { size?: number }) {
+/* Generated cover for projects without a screenshot. */
+function Cover({ project, large = false }: { project: Project; large?: boolean }) {
+  const h = project.hue;
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-    </svg>
+    <div
+      className="absolute inset-0 overflow-hidden"
+      style={{
+        background: `radial-gradient(120% 90% at 0% 0%, hsl(${h} 70% 45% / 0.55), transparent 55%),
+          radial-gradient(90% 80% at 100% 100%, hsl(${(h + 50) % 360} 80% 50% / 0.45), transparent 60%),
+          #0b1220`,
+      }}
+    >
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgb(255 255 255 / .08) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / .08) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
+      <div className="absolute inset-x-6 bottom-6">
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/70">{project.company}</p>
+        <p className={`mt-2 font-heading font-semibold leading-tight text-white ${large ? "text-2xl" : "text-xl"}`}>
+          {project.title}
+        </p>
+      </div>
+    </div>
   );
 }
 
-const projects = [
-  {
-    title: "Cosplayer Portfolio Blog",
-    company: "Personal Project",
-    description: "A dynamic blog page for a cosplayer website featuring portfolio showcases, event updates, and community engagement with modern UI/UX design.",
-    image: "/project1.png",
-    tags: ["HTML/CSS", "JavaScript", "PHP", "Responsive Design"],
-  },
-  {
-    title: "Strange Domains Platform",
-    company: "Current Work",
-    description: "Main project focusing on domain management and unusual domain tracking system with advanced search capabilities and domain analytics dashboard.",
-    image: "/project2.png",
-    tags: ["PHP", "Laravel", "MySQL", "Domain Management"],
-  },
-  {
-    title: "Inventory Management System",
-    company: "Enterprise Solution",
-    description: "Comprehensive inventory system with real-time stock tracking, automated reordering, barcode scanning, and detailed reporting features.",
-    image: "/project3.png",
-    tags: ["PHP", "JavaScript", "MySQL", "Inventory Management"],
-  },
-  {
-    title: "Domain Lifecycle Management",
-    company: "Eversun Software",
-    description: "Built a comprehensive domain lifecycle management system with tracking, history logging, and client activity monitoring using Laravel and React.js.",
-    tags: ["Laravel", "React", "Inertia.js", "TailwindCSS", "MySQL"],
-  },
-  {
-    title: "System Email History",
-    company: "Eversun Software",
-    description: "Developed an email history tracking system with search, filtering, and detailed audit logs for all system communications.",
-    tags: ["PHP", "JavaScript", "Laravel", "Job Queues"],
-  },
-  {
-    title: "Internal Tracking System",
-    company: "Bitshares Labs",
-    description: "Built internal tracking systems for monitoring activities, records, and environment-related data with responsive UI design.",
-    tags: ["HTML/CSS", "JavaScript", "PHP", "MySQL"],
-  },
-  {
-    title: "Client Activity Logger",
-    company: "Eversun Software",
-    description: "Implemented comprehensive client activity logging with real-time monitoring, error handling, and performance optimization.",
-    tags: ["Laravel", "React", "Database Indexing", "Query Optimization"],
-  },
-];
+function Media({ project, sizes, eager = false }: { project: Project; sizes: string; eager?: boolean }) {
+  return project.image ? (
+    <Image
+      src={project.image}
+      alt={`${project.title} screenshot`}
+      fill
+      sizes={sizes}
+      loading={eager ? "eager" : "lazy"}
+      className="object-cover"
+    />
+  ) : (
+    <Cover project={project} large />
+  );
+}
+
+/* Floating preview that follows the cursor on desktop. */
+function FloatingPreview({ index }: { index: number | null }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 180, damping: 22, mass: 0.6 });
+  const sy = useSpring(y, { stiffness: 180, damping: 22, mass: 0.6 });
+
+  useEffect(() => {
+    const W = 380;
+    const H = 260;
+    const onMove = (e: PointerEvent) => {
+      const px = e.clientX + 28;
+      const py = e.clientY - H / 2;
+      x.set(Math.min(px, window.innerWidth - W - 16));
+      y.set(Math.max(16, Math.min(py, window.innerHeight - H - 100)));
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [x, y]);
+
+  const visible = index !== null;
+
+  return (
+    <m.div
+      aria-hidden
+      className="pointer-events-none fixed top-0 left-0 z-30 hidden h-[260px] w-[380px] overflow-hidden rounded-2xl border border-white/10 shadow-[0_30px_80px_-20px_rgb(0_0_0/0.8)] lg:block"
+      style={{ x: sx, y: sy }}
+      initial={false}
+      animate={{ opacity: visible ? 1 : 0, scale: visible ? 1 : 0.85, rotate: visible ? -2 : -6 }}
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
+    >
+      {/* Stack of previews; slide to the hovered one */}
+      <m.div
+        className="h-full w-full"
+        initial={false}
+        animate={{ y: `${-(index ?? 0) * 100}%` }}
+        transition={{ type: "spring", stiffness: 200, damping: 28 }}
+      >
+        {projects.map((p) => (
+          <div key={p.title} className="relative h-full w-full">
+            <Media project={p} sizes="380px" eager />
+          </div>
+        ))}
+      </m.div>
+    </m.div>
+  );
+}
 
 export default function Projects() {
+  const [hover, setHover] = useState<number | null>(null);
+  const [open, setOpen] = useState<number | null>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const nearList = useInView(listRef, { once: true, margin: "400px" });
+
   return (
-    <section id="projects" className="relative py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          {/* <span className="text-[#22C55E] font-mono text-sm tracking-widest uppercase">
-            // Projects
-          </span> */}
-          <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#F8FAFC] mt-3">
-            Featured <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] to-[#06B6D4]">Projects</span>
-          </h2>
-          <p className="text-[#94A3B8] mt-4 max-w-xl mx-auto">
-            Real-world applications I've built and contributed to.
-          </p>
-        </motion.div>
+    <section id="projects" tabIndex={-1} className="relative py-28 md:py-40">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+        <SectionHeading
+          index="04"
+          eyebrow="Projects"
+          title="Selected"
+          accent="work."
+          description="Real-world applications I've built and contributed to. Hover to preview, tap to expand."
+        />
 
-        {/* Project Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
-            <GlassCard
-              key={project.title}
-              delay={index * 0.1}
-              className="group p-6"
-            >
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#22C55E]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <ul ref={listRef} className="border-t border-line" onPointerLeave={() => setHover(null)}>
+          {projects.map((p, i) => {
+            const isOpen = open === i;
+            return (
+              <Reveal as="li" key={p.title} delay={i * 0.04} className="border-b border-line">
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={`project-${i}`}
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  onPointerEnter={(e) => e.pointerType === "mouse" && setHover(i)}
+                  className="group grid w-full cursor-pointer grid-cols-[auto_1fr_auto] items-center gap-4 py-6 text-left md:gap-8 md:py-8"
+                >
+                  <span className="font-mono text-xs text-fg-subtle transition-colors group-hover:text-accent">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-heading text-2xl font-semibold tracking-tight text-fg transition-transform duration-500 ease-out-expo group-hover:translate-x-2 md:text-4xl lg:text-5xl">
+                      <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text transition-colors duration-500 group-hover:text-transparent">
+                        {p.title}
+                      </span>
+                    </span>
+                    <span className="mt-2 block text-sm text-fg-muted">{p.company}</span>
+                  </span>
+                  <span className="flex items-center gap-4">
+                    <span className="hidden max-w-[260px] flex-wrap justify-end gap-1.5 xl:flex">
+                      {p.tags.slice(0, 3).map((t) => (
+                        <span key={t} className="rounded-full border border-line px-2.5 py-0.5 font-mono text-[11px] text-fg-muted">
+                          {t}
+                        </span>
+                      ))}
+                    </span>
+                    <span className="grid h-11 w-11 place-items-center rounded-full border border-line text-fg-muted transition-[transform,color,border-color] duration-300 group-hover:border-accent/60 group-hover:text-accent">
+                      <Plus size={18} aria-hidden className={`transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} />
+                    </span>
+                  </span>
+                </button>
 
-              <div className="relative z-0">
-                {/* Project Image with Animation */}
-                {project.image && (
-                  <div className="relative mb-4 overflow-hidden rounded-lg group/image">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#22C55E]/20 to-[#06B6D4]/20 opacity-0 group-hover/image:opacity-100 transition-opacity duration-500 z-10" />
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-48 object-cover rounded-lg transform group-hover/image:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-[#0F172A]/40 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center">
-                      <div className="flex gap-3 transform translate-y-4 group-hover/image:translate-y-0 transition-transform duration-300">
-                        <a
-                          href="https://github.com/mjbkaz"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-3 bg-[#22C55E] text-white rounded-lg hover:bg-[#16A34A] transition-colors shadow-lg hover:shadow-[#22C55E]/50"
-                          aria-label="View on GitHub"
-                        >
-                          <GithubIcon size={20} />
-                        </a>
-                        <a
-                          href="https://github.com/mjbkaz"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-3 bg-[#06B6D4] text-white rounded-lg hover:bg-[#0891B2] transition-colors shadow-lg hover:shadow-[#06B6D4]/50"
-                          aria-label="View source on GitHub"
-                        >
-                          <ExternalLink size={20} />
-                        </a>
+                {/* Expandable details (works on every device + keyboard) */}
+                <div
+                  id={`project-${i}`}
+                  role="region"
+                  aria-label={`${p.title} details`}
+                  className={`grid transition-[grid-template-rows] duration-500 ease-out-expo ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                >
+                  <div className="overflow-hidden" inert={!isOpen}>
+                    <div className="grid gap-6 pb-8 md:grid-cols-[1fr_1.1fr] md:pl-12">
+                      <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-line lg:hidden">
+                        {isOpen && <Media project={p} sizes="(min-width: 768px) 45vw, 100vw" />}
+                      </div>
+                      <div>
+                        <p className="max-w-xl leading-relaxed text-fg-muted">{p.description}</p>
+                        <ul className="mt-5 flex flex-wrap gap-2" aria-label="Tech used">
+                          {p.tags.map((t) => (
+                            <li key={t} className="rounded-full border border-line px-3 py-1 font-mono text-xs text-fg-muted">
+                              {t}
+                            </li>
+                          ))}
+                        </ul>
+                        {p.href && (
+                          <a
+                            href={p.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-6 inline-flex items-center gap-1.5 font-medium text-accent hover:underline"
+                          >
+                            Visit project <ArrowUpRight size={16} aria-hidden />
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
-                )}
-
-                {/* Project Header */}
-                <div className="mb-4">
-                  <h3 className="text-xl font-heading font-bold text-[#F8FAFC] group-hover:text-[#22C55E] transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-[#64748B]">{project.company}</p>
                 </div>
+              </Reveal>
+            );
+          })}
+        </ul>
 
-                {/* Description */}
-                <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">
-                  {project.description}
-                </p>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-xs font-medium text-[#22C55E] bg-[#22C55E]/10 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </GlassCard>
-          ))}
-        </div>
+        <Reveal className="mt-12 flex justify-center md:justify-end">
+          <a
+            href={site.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="glass inline-flex h-12 items-center gap-2.5 rounded-full px-6 font-medium text-fg transition-colors hover:border-accent/50 hover:text-accent"
+          >
+            <GithubIcon size={18} />
+            More on GitHub
+            <ArrowUpRight size={16} aria-hidden />
+          </a>
+        </Reveal>
       </div>
+
+      <AnimatePresence>{nearList && <FloatingPreview index={hover} />}</AnimatePresence>
     </section>
   );
 }

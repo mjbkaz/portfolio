@@ -1,92 +1,134 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-interface Bubble {
-  id: number;
+type Particle = {
   x: number;
   y: number;
-  size: number;
-  driftX: number;
-  driftY: number;
+  vx: number;
+  vy: number;
+  r: number;
+  life: number;
+  max: number;
   hue: number;
-  born: number;
-}
+};
 
+const MAX_PARTICLES = 48;
+
+/**
+ * Bubble cursor trail drawn on one <canvas>.
+ * The old version re-rendered React on every mouse move; this one never touches
+ * React state, only animates while bubbles exist, and is off on touch devices
+ * and for reduced-motion users.
+ */
 export default function CursorTrail() {
-  const [bubbles, setBubbles] = useState<Bubble[]>([]);
-  const idRef = useRef(0);
-  const lastRef = useRef<{ x: number; y: number } | null>(null);
-  const reducedMotion = useRef(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    reducedMotion.current = mq.matches;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!fine || reduce) return;
 
-    const onMove = (e: PointerEvent) => {
-      if (reducedMotion.current) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-      const last = lastRef.current;
-      const dist = last
-        ? Math.hypot(e.clientX - last.x, e.clientY - last.y)
-        : Infinity;
-      lastRef.current = { x: e.clientX, y: e.clientY };
+    const particles: Particle[] = [];
+    let raf = 0;
+    let running = false;
+    let last = 0;
+    let lastPointer: { x: number; y: number } | null = null;
 
-      // Only spawn when the cursor is actually moving.
-      if (dist < 10) return;
-      if (Math.random() > 0.55) return;
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(window.innerWidth * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
 
-      const size = 6 + Math.random() * 14;
-      setBubbles((prev) => [
-        ...prev.slice(-45),
-        {
-          id: idRef.current++,
-          x: e.clientX,
-          y: e.clientY,
-          size,
-          driftX: (Math.random() - 0.5) * 30,
-          driftY: -20 - Math.random() * 40,
-          hue: Math.random() > 0.5 ? 160 : 190, // green ~160, cyan ~190
-          born: Date.now(),
-        },
-      ]);
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 1 / 30);
+      last = now;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.life += dt;
+        if (p.life >= p.max) {
+          particles.splice(i, 1);
+          continue;
+        }
+        p.vy -= 18 * dt; // bubbles accelerate upwards
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+
+        const t = p.life / p.max;
+        const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
+        const r = p.r * (0.5 + 0.6 * Math.min(1, t * 4));
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `hsla(${p.hue}, 75%, 68%, ${0.65 * alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${0.08 * alpha})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(p.x - r * 0.35, p.y - r * 0.35, Math.max(0.8, r * 0.22), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${0.55 * alpha})`;
+        ctx.fill();
+      }
+
+      if (particles.length) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
     };
 
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse" || document.documentElement.dataset.game) return;
+      const prev = lastPointer;
+      lastPointer = { x: e.clientX, y: e.clientY };
+      if (!prev || Math.hypot(e.clientX - prev.x, e.clientY - prev.y) < 12) return;
+      if (Math.random() > 0.5) return;
+
+      if (particles.length >= MAX_PARTICLES) particles.shift();
+      particles.push({
+        x: e.clientX,
+        y: e.clientY,
+        vx: (Math.random() - 0.5) * 24,
+        vy: -12 - Math.random() * 26,
+        r: 3 + Math.random() * 6,
+        life: 0,
+        max: 0.9 + Math.random() * 0.5,
+        hue: Math.random() > 0.5 ? 150 : 190,
+      });
+
+      if (!running) {
+        running = true;
+        last = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("resize", resize);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
-  // Remove bubbles after their float animation completes.
-  useEffect(() => {
-    if (bubbles.length === 0) return;
-    const t = setTimeout(() => {
-      const cutoff = Date.now() - 1200;
-      setBubbles((prev) => prev.filter((b) => b.born > cutoff));
-    }, 200);
-    return () => clearTimeout(t);
-  }, [bubbles]);
-
   return (
-    <div className="pointer-events-none fixed inset-0 z-[60] overflow-hidden" aria-hidden>
-      {bubbles.map((b) => (
-        <span
-          key={b.id}
-          className="bubble-trail absolute rounded-full"
-          style={{
-            width: b.size,
-            height: b.size,
-            left: b.x,
-            top: b.y,
-            border: `1px solid hsla(${b.hue}, 70%, 70%, 0.6)`,
-            background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), hsla(${b.hue}, 80%, 60%, 0.15) 40%, transparent 70%)`,
-            boxShadow: `0 0 8px hsla(${b.hue}, 80%, 60%, 0.4), inset 0 0 6px hsla(${b.hue}, 80%, 70%, 0.3)`,
-            transform: "translate(-50%, -50%)",
-            animation: "bubble-trail-rise 1.2s ease-out forwards",
-            ["--drift-x" as string]: `${b.driftX}px`,
-            ["--drift-y" as string]: `${b.driftY}px`,
-          }}
-        />
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-[60] h-full w-full"
+    />
   );
 }

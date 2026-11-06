@@ -1,208 +1,130 @@
-"use client";
+import { Award, Gamepad2 } from "lucide-react";
+import Marquee from "@/components/ui/Marquee";
+import Reveal from "@/components/ui/Reveal";
+import SectionHeading from "@/components/ui/SectionHeading";
+import SkillsCloud from "@/components/ui/SkillsCloud";
+import SpotlightGroup from "@/components/ui/SpotlightGroup";
+import { certifications, gamerProfile, marqueeTech, skillGroups } from "@/lib/data";
 
-import { motion } from "framer-motion";
-import GlassCard from "@/components/GlassCard";
-import {
-  Code2,
-  Database,
-  Globe,
-  Wrench,
-  Gamepad2,
-  Star,
-} from "lucide-react";
+type Group = (typeof skillGroups)[number];
 
-const skillCategories = [
-  {
-    title: "Frontend",
-    icon: Globe,
-    color: "#06B6D4",
-    skills: [
-      { name: "React.js", level: 90 },
-      { name: "Vue.js", level: 75 },
-      { name: "TailwindCSS", level: 95 },
-      { name: "Bootstrap", level: 85 },
-      { name: "Shadcn/ui", level: 85 },
-      { name: "CSS5/SASS", level: 80 },
-      { name: "Foundation", level: 70 },
-    ],
-  },
-  {
-    title: "Backend",
-    icon: Code2,
-    color: "#22C55E",
-    skills: [
-      { name: "Laravel", level: 90 },
-      { name: "PHP", level: 85 },
-      { name: "Inertia.js", level: 85 },
-      { name: "REST APIs", level: 80 },
-      { name: "Authentication & Auth", level: 80 },
-      { name: "CRUD Operations", level: 90 },
-    ],
-  },
-  {
-    title: "Database & Tools",
-    icon: Database,
-    color: "#EAB308",
-    skills: [
-      { name: "MySQL", level: 85 },
-      { name: "PostgreSQL", level: 75 },
-      { name: "Git", level: 85 },
-      { name: "JavaScript", level: 90 },
-      { name: "HTML/CSS", level: 95 },
-    ],
-  },
-  {
-    title: "Workspace & Others",
-    icon: Wrench,
-    color: "#A855F7",
-    skills: [
-      { name: "Slack", level: 85 },
-      { name: "Teams", level: 80 },
-      { name: "Zoom", level: 80 },
-      { name: "Google Workspace", level: 85 },
-      { name: "Problem Solving", level: 90 },
-      { name: "Team Collaboration", level: 90 },
-    ],
-  },
-];
-
-const certifications = [
-  "Computer System Servicing NC II",
-  "BLINC Technologies Internship Program",
-];
+function SkillCard({
+  group,
+  className = "",
+  delay = 0,
+  footer,
+}: {
+  group: Group;
+  className?: string;
+  delay?: number;
+  footer?: React.ReactNode;
+}) {
+  return (
+    <Reveal delay={delay} className={`spotlight flex flex-col rounded-3xl p-6 md:p-7 ${className}`}>
+      <div className="flex items-center gap-3">
+        <span
+          aria-hidden
+          className="h-2.5 w-2.5 rounded-full"
+          style={{ background: group.color, boxShadow: `0 0 14px ${group.color}` }}
+        />
+        <h3 className="font-heading text-xl font-semibold text-fg">{group.title}</h3>
+      </div>
+      <p className="mt-2 text-sm text-fg-muted">{group.blurb}</p>
+      <ul className="mt-6 flex flex-wrap gap-2">
+        {group.skills.map((skill) => (
+          <li
+            key={skill}
+            className="rounded-full border border-line bg-white/[0.03] px-3.5 py-1.5 text-sm text-fg transition-colors duration-200 hover:border-line-strong"
+          >
+            {skill}
+          </li>
+        ))}
+      </ul>
+      {footer}
+    </Reveal>
+  );
+}
 
 export default function Skills() {
+  const [frontend, backend, data, workspace] = skillGroups;
+
   return (
-    <section id="skills" className="relative py-24 md:py-32 overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-0 w-80 h-80 bg-[#22C55E]/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-[#06B6D4]/5 rounded-full blur-[100px]" />
+    <section id="skills" tabIndex={-1} className="relative overflow-hidden py-28 md:py-40">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+        <SectionHeading
+          index="03"
+          eyebrow="Skills"
+          title="A toolkit built for"
+          accent="shipping."
+          description="Leveled up through real-world projects and continuous learning."
+        />
+
+        <SpotlightGroup className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
+          <SkillCard
+            group={frontend}
+            className="lg:col-span-4 lg:row-span-2"
+            footer={
+              <div className="mt-8 border-t border-line pt-6 lg:mt-auto">
+                <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-fg-subtle">Core stack</p>
+                <p className="mt-3 font-heading text-2xl leading-tight font-semibold md:text-3xl">
+                  <span className="text-gradient">Laravel</span>
+                  <span className="text-fg-subtle"> × </span>
+                  <span className="text-gradient">React</span>
+                  <span className="text-fg-subtle"> × </span>
+                  <span className="text-gradient">Inertia</span>
+                </p>
+              </div>
+            }
+          />
+
+          {/* Centerpiece: interactive 3D tech cloud */}
+          <Reveal
+            delay={0.06}
+            className="spotlight flex flex-col items-center justify-center rounded-3xl p-6 lg:col-span-4 lg:row-span-2"
+          >
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-fg-subtle">tech stack · drag to spin</p>
+            <SkillsCloud />
+          </Reveal>
+
+          <SkillCard group={backend} className="lg:col-span-4" delay={0.12} />
+          <SkillCard group={data} className="lg:col-span-4" delay={0.16} />
+          <SkillCard group={workspace} className="lg:col-span-4" delay={0.04} />
+
+          <Reveal delay={0.08} className="spotlight rounded-3xl p-6 md:p-7 lg:col-span-4">
+            <div className="flex items-center gap-3">
+              <Award size={20} className="text-[#facc15]" aria-hidden />
+              <h3 className="font-heading text-xl font-semibold text-fg">Certifications</h3>
+            </div>
+            <ul className="mt-6 space-y-3">
+              {certifications.map((cert) => (
+                <li key={cert} className="flex items-start gap-3 rounded-2xl border border-line bg-white/[0.02] p-3.5 text-sm text-fg">
+                  <span aria-hidden className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#facc15]" />
+                  {cert}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+
+          <Reveal delay={0.12} className="spotlight rounded-3xl p-6 md:col-span-2 md:p-7 lg:col-span-4">
+            <div className="flex items-center gap-3">
+              <Gamepad2 size={20} className="text-accent" aria-hidden />
+              <h3 className="font-heading text-xl font-semibold text-fg">Gamer Profile</h3>
+            </div>
+            <dl className="mt-6 grid grid-cols-2 gap-3">
+              {gamerProfile.map((stat) => (
+                <div key={stat.label} className="rounded-2xl border border-line bg-white/[0.02] p-3.5">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg-subtle">{stat.label}</dt>
+                  <dd className="mt-1 text-sm font-medium text-fg">{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+        </SpotlightGroup>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          {/* <span className="text-[#22C55E] font-mono text-sm tracking-widest uppercase">
-            // Skills & Stats
-          </span> */}
-          <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#F8FAFC] mt-3">
-            Skill <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22C55E] to-[#06B6D4]">Tree</span>
-          </h2>
-          <p className="text-[#94A3B8] mt-4 max-w-xl mx-auto">
-            Leveled up through real-world projects and continuous learning.
-          </p>
-        </motion.div>
-
-        {/* Skill Categories Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {skillCategories.map((category, catIndex) => (
-            <GlassCard
-              key={category.title}
-              delay={catIndex * 0.1}
-              className="p-6"
-            >
-              {/* Category Header */}
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="p-2 rounded-lg"
-                  style={{ backgroundColor: `${category.color}15` }}
-                >
-                  <category.icon size={20} style={{ color: category.color }} />
-                </div>
-                <h3 className="text-lg font-heading font-bold text-[#F8FAFC]">
-                  {category.title}
-                </h3>
-              </div>
-
-              {/* Skills */}
-              <div className="space-y-4">
-                {category.skills.map((skill, skillIndex) => (
-                  <div key={skill.name}>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm text-[#94A3B8]">{skill.name}</span>
-                      <span className="text-xs font-mono text-[#64748B]">
-                        {skill.level}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 bg-[#0F172A] rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{
-                          duration: 1,
-                          delay: catIndex * 0.1 + skillIndex * 0.05,
-                          ease: "easeOut",
-                        }}
-                        className="h-full rounded-full"
-                        style={{
-                          backgroundColor: category.color,
-                          boxShadow: `0 0 8px ${category.color}40`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          ))}
-        </div>
-
-        {/* Certifications & Gaming Section */}
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Certifications */}
-          <GlassCard className="p-6">
-            <h3 className="text-lg font-heading font-bold text-[#F8FAFC] mb-4 flex items-center gap-2">
-              <Star size={20} className="text-[#EAB308]" />
-              Certifications
-            </h3>
-            <div className="space-y-3">
-              {certifications.map((cert) => (
-                <div
-                  key={cert}
-                  className="flex items-center gap-3 p-3 bg-[#0F172A] rounded-lg"
-                >
-                  <div className="w-2 h-2 rounded-full bg-[#EAB308]" />
-                  <span className="text-[#94A3B8] text-sm">{cert}</span>
-                </div>
-              ))}
-            </div>
-          </GlassCard>
-
-          {/* Gaming Stats */}
-          <GlassCard
-            delay={0.1}
-            className="bg-gradient-to-r from-[#22C55E]/10 to-[#06B6D4]/10 border-[#22C55E]/20 p-6"
-          >
-            <h3 className="text-lg font-heading font-bold text-[#F8FAFC] mb-4 flex items-center gap-2">
-              <Gamepad2 size={20} className="text-[#22C55E]" />
-              Gamer Profile
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: "Gamer Tag", value: "Kaz" },
-                { label: "Role", value: "Support / Flex" },
-                { label: "Playstyle", value: "Strategic" },
-                { label: "Achievement", value: "Problem Solver" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="p-3 bg-[#0F172A]/50 rounded-lg"
-                >
-                  <p className="text-[#64748B] text-xs">{stat.label}</p>
-                  <p className="text-[#F8FAFC] font-medium text-sm">{stat.value}</p>
-                </div>
-              ))}
-            </div>
-          </GlassCard>
-        </div>
+      <div className="mt-20 space-y-2 md:mt-28">
+        <Marquee items={marqueeTech} duration={45} />
+        <Marquee items={[...marqueeTech].reverse()} reverse duration={55} />
       </div>
     </section>
   );
